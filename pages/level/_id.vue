@@ -7,7 +7,7 @@
       </div>
     </page-title>
 
-    <div class="container mx-auto">
+    <div class="container">
       <div class="content" v-for="i in [1, 2]" :key="i">
         <p class="lead">
           <span
