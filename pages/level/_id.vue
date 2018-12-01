@@ -1,29 +1,45 @@
 <template>
   <section>
-    <h2 class="page-title">Niveau 1 - j k</h2>
+    <page-title>
+      <div class="flex justify-between">
+        <span>Level abc</span>
+        <span>Timer: 123</span>
+      </div>
+    </page-title>
 
-    <div class="content" v-for="i in [1, 2]" :key="i">
-      <p class="lead">
-        <span
-          v-for="(input, index) of inputs"
-          :key="index"
-        >{{ input }}</span>
-      </p>
-      <div
-        class="input"
-        @input="onType"
-        @paste.prevent
-        @keydown.delete.prevent
-        ref="input"
-        spellcheck="false"
-        contenteditable
-      />
+    <div class="container mx-auto">
+      <div class="content" v-for="i in [1, 2]" :key="i">
+        <p class="lead">
+          <span
+            v-for="(input, index) of inputs"
+            :key="index"
+          >{{ input }}</span>
+        </p>
+        <div
+          class="input"
+          @input="onType"
+          @paste.prevent
+          @keydown.delete.prevent
+          ref="input"
+          spellcheck="false"
+          contenteditable
+        />
+      </div>
+
+      <footer class="footer">
+        <nuxt-link to="/">&larr; terug naar overzicht</nuxt-link>
+      </footer>
+
     </div>
   </section>
 </template>
 
 <script>
+import PageTitle from '@/components/PageTitle.vue';
 export default {
+  components: {
+    PageTitle
+  },
   data() {
     return {
       inputs: [
@@ -71,6 +87,7 @@ export default {
       currentInput: 0
     };
   },
+
   mounted() {
     this.$refs.input[this.currentInput].focus();
   },
@@ -137,5 +154,10 @@ export default {
 .input {
   letter-spacing: 0.5rem;
   @apply w-full border border-grey-light p-2;
+}
+
+.footer a {
+  @apply text-blue p-4;
+  text-decoration: none;
 }
 </style>

@@ -1,15 +1,41 @@
 <template>
-  <div class="container mx-auto">
-    <nuxt/>
+  <div class="app">
+    <section class="app__sidebar">
+      <sidebar/>
+    </section>
+
+    <div class="app__content">
+      <nuxt/>
+    </div>
   </div>
 </template>
 
-<style>
+<script>
+import Sidebar from '@/components/Sidebar.vue';
+
+export default {
+  components: {
+    Sidebar
+  }
+}
+</script>
+
+
+<style scoped>
 html {
   @apply font-sans;
 }
 
-.page-title {
-  @apply mx-3 my-3 font-normal border-b border-blue-lighter py-3 text-blue;
+.app {
+  @apply flex h-screen;
 }
+
+.app__content {
+  flex: 1;
+}
+
+.app__sidebar {
+  width: 250px;
+}
+
 </style>

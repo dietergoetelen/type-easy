@@ -1,13 +1,9 @@
 <template>
   <section>
-    <!-- <div class="nav">
-      <h1>Leren typen</h1>
-    </div> -->
 
+    <page-title>Selecteer niveau</page-title>
 
-    <h2 class="page-title">Selecteer niveau</h2>
-
-    <div class="content">
+    <div class="content container">
       <div class="level-select">
         <nuxt-link tag="div" class="inner-level-select" to="/level/1">
           j k
@@ -39,8 +35,10 @@
 </template>
 
 <script>
+import PageTitle from '@/components/PageTitle.vue';
 export default {
   components: {
+    PageTitle
   }
 }
 </script>
