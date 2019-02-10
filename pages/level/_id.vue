@@ -2,13 +2,17 @@
   <section>
     <page-title>
       <div class="flex justify-between">
-        <span>Level abc</span>
-        <timer ref="timer"/>
+        <span>{{ level.name }}</span>
+        <timer ref="timer" />
       </div>
     </page-title>
 
     <div class="container">
-      <div class="content" v-for="(i, index) in level.inputs" :key="index">
+      <div
+        class="content"
+        v-for="(i, index) in level.inputs"
+        :key="index"
+      >
         <p class="lead">
           <span
             v-for="(input, index) of i"
@@ -36,7 +40,7 @@
 
 <script>
 import Timer from "@/components/Timer.vue";
-import PageTitle from '@/components/PageTitle.vue';
+import PageTitle from "@/components/PageTitle.vue";
 import levelService from "@/services/level-service";
 import { mapActions } from "vuex";
 
@@ -46,7 +50,7 @@ export default {
     Timer
   },
   asyncData({ redirect, params, store }) {
-    const level = store.getters['user-level/level'](+params.id);
+    const level = store.getters["user-level/level"](+params.id);
 
     if (!level) {
       return redirect("/");
@@ -73,7 +77,11 @@ export default {
 
       const addAllValid = () => {
         for (let i = 0; i < this.index; i += 1) {
-          target.innerHTML += `<span>${this.level.inputs[this.currentInput][i].trim() ? this.level.inputs[this.currentInput][i] : '&nbsp;'}</span>`;
+          target.innerHTML += `<span>${
+            this.level.inputs[this.currentInput][i].trim()
+              ? this.level.inputs[this.currentInput][i]
+              : "&nbsp;"
+          }</span>`;
         }
       };
 
@@ -83,7 +91,7 @@ export default {
       } else if (typeof event.data === "string") {
         addAllValid();
         this.invalidCounter += 1;
-        target.innerHTML += `<span class="text-red">${event.data}</span>`
+        target.innerHTML += `<span class="text-red">${event.data}</span>`;
       }
 
       const range = document.createRange();
@@ -101,11 +109,25 @@ export default {
       // check end
       if (this.index === this.level.inputs[this.currentInput].length) {
         if (this.$refs.input[++this.currentInput]) {
-          this.$refs.input[this.currentInput].focus()
+          this.$refs.input[this.currentInput].focus();
           this.index = 0;
         } else {
+          const percentage =
+            100 -
+            (this.invalidCounter /
+              [].concat.apply([], this.level.inputs).length) *
+              100;
           this.$refs.timer.stop();
-          this.addUserLevel(+this.$route.params.id);
+
+          if (percentage > 80) {
+            this.addUserLevel({
+              level: +this.$route.params.id,
+              time: this.$refs.timer.time,
+              percentage: percentage.toFixed(2)
+            });
+          } else {
+            console.log("OEPS NOG EEN KEER!");
+          }
         }
       }
     }

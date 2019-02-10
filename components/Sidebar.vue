@@ -6,8 +6,8 @@
     <nuxt-link to="/" tag="div" class="sidebar__item">
       Start
     </nuxt-link>
-    <nuxt-link to="/profiel" tag="div" class="sidebar__item">
-      Profiel
+    <nuxt-link to="/login" tag="div" class="sidebar__item">
+      Selecteer profiel
     </nuxt-link>
   </div>
 </template>

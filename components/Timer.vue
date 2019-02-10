@@ -1,11 +1,11 @@
 <template>
-  <span>Tijd: {{ timer }}</span>
+  <span>Tijd: {{ time }}</span>
 </template>
 
 <script>
 export default {
   data: () => ({
-    timer: 0,
+    time: 0,
     stopped: false
   }),
   mounted() {
@@ -15,7 +15,7 @@ export default {
     start() {
       setTimeout(() => {
         if (!this.stopped) {
-          this.timer += 1;
+          this.time += 1;
           this.start();
         }
       }, 1000);

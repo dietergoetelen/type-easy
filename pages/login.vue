@@ -1,16 +1,34 @@
 <template>
   <div class="login">
-    <button @click="login">Login</button>
+    <new-user-modal @close="addUser($event)" />
+    <page-title>Selecteer profiel</page-title>
+
+    <div class="login-select">
+      <button
+        @click="add"
+        class="text-3xl"
+      >+</button>
+    </div>
   </div>
 </template>
 
 <script>
+import PageTitle from "@/components/PageTitle.vue";
+import NewUserModal from "@/components/NewUserModal.vue";
 export default {
-  layout: 'login',
+  components: {
+    PageTitle,
+    NewUserModal
+  },
   methods: {
-    login() {
+    add() {
+      console.log("showing modal");
+      this.$modal.show("new-user");
+    },
+    addUser(username) {
+      this.$modal.hide("new-user");
     }
   }
-}
+};
 </script>
 

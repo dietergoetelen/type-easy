@@ -6,20 +6,32 @@ export const state = () => ({
 });
 
 export const actions = {
-  async add({commit, rootState}, level) {
-    console.log(rootState);
+  async add({ commit, rootState }, level) {
     const userId = rootState.profile.user.id;
     const levels = await localforage.getItem(`USER_LEVEL${userId}`);
-    const toSaveLevels = levels || [];
+    let hasLevel = false;
+    const toSaveLevels = (levels || []).map(x => {
+      if (level.level === x.level) {
+        hasLevel = true;
+        if (level.percentage > x.percentage) {
+          return level;
+        } else {
+          return x;
+        }
+      }
+      return x;
+    });
 
-    toSaveLevels.push(level);
+    if (!hasLevel) {
+      toSaveLevels.push(level);
+    }
 
     await localforage.setItem(`USER_LEVEL${userId}`, toSaveLevels);
 
     commit("USER_LEVELS", toSaveLevels);
   },
-  async setUserLevels({commit}, userId) {
-    const levels = await localforage.getItem(`USER_LEVEL${userId}`)
+  async setUserLevels({ commit }, userId) {
+    const levels = await localforage.getItem(`USER_LEVEL${userId}`);
     commit("USER_LEVELS", levels || []);
   }
 };
@@ -31,26 +43,36 @@ export const mutations = {
 };
 
 export const getters = {
-  levels: (state) => {
+  levels: state => {
     const userLevels = levelService.getLevels();
     const levels = Object.keys(userLevels).reduce((prev, key) => {
+      const level = state.userLevels.find(y => y.level === userLevels[key].id);
+
       prev.push({
         ...userLevels[key],
-        unlocked: state.userLevels.find(y => y === userLevels[key].id) !== undefined
+        unlocked: level !== undefined,
+        ...level
       });
 
       return prev;
     }, []);
 
+    let found = false;
+
     return levels.map((item, index) => {
-      if (!levels[index].unlocked && (!levels[index - 1] || levels[index - 1].unlocked)) {
+      if (
+        !found &&
+        !levels[index].unlocked &&
+        (!levels[index - 1] || levels[index - 1].unlocked)
+      ) {
         item.unlocked = true;
+        found = true;
       }
 
       return item;
     });
-  }, 
-  level: (state, getters) => (id) => {
+  },
+  level: (state, getters) => id => {
     const level = getters.levels.find(x => x.id === id);
 
     if (!level || !level.unlocked) {
