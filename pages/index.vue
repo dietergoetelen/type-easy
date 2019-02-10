@@ -4,30 +4,15 @@
     <page-title>Selecteer niveau</page-title>
 
     <div class="content container">
-      <div class="level-select">
-        <nuxt-link tag="div" class="inner-level-select" to="/level/1">
-          j k
+      <div class="level-select" v-for="level of levels" :key="level.id">
+        <nuxt-link
+          tag="div"
+          class="inner-level-select"
+          :class="{disabled: !level.unlocked}"
+          :to="'/level/' + level.id"
+        >
+          {{ level.name }}
         </nuxt-link>
-      </div>
-      <div class="level-select">
-        <div class="inner-level-select disabled">
-          f g
-        </div>
-      </div>
-      <div class="level-select">
-        <div class="inner-level-select disabled">
-          d e
-        </div>
-      </div>
-      <div class="level-select">
-        <div class="inner-level-select disabled">
-          x ;
-        </div>
-      </div>
-      <div class="level-select">
-        <div class="inner-level-select disabled">
-          l m
-        </div>
       </div>
     </div>
 
@@ -35,17 +20,26 @@
 </template>
 
 <script>
-import PageTitle from '@/components/PageTitle.vue';
+import PageTitle from "@/components/PageTitle.vue";
+import levelService from "@/services/level-service";
+import { mapGetters, mapActions } from "vuex";
+
 export default {
+  middleware: "authenticated",
   components: {
     PageTitle
+  },
+  computed: {
+    ...mapGetters({
+      levels: "user-level/levels",
+    })
   }
-}
+};
 </script>
 
 <style scoped>
 .nav {
-  @apply bg-blue-lightest border border-blue-lighter p-3 m-3 text-blue; 
+  @apply bg-blue-lightest border border-blue-lighter p-3 m-3 text-blue;
 }
 
 .nav > h1 {
@@ -62,7 +56,7 @@ export default {
 
 .inner-level-select {
   @apply flex flex-col cursor-pointer m-3 p-3 bg-blue-lightest border border-blue-lighter text-blue text-center h-16 justify-center;
-  transition: all .3s;
+  transition: all 0.3s;
 }
 
 .inner-level-select:hover {

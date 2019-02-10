@@ -3,15 +3,15 @@
     <page-title>
       <div class="flex justify-between">
         <span>Level abc</span>
-        <span>Timer: 123</span>
+        <timer ref="timer"/>
       </div>
     </page-title>
 
     <div class="container">
-      <div class="content" v-for="i in [1, 2]" :key="i">
+      <div class="content" v-for="(i, index) in level.inputs" :key="index">
         <p class="lead">
           <span
-            v-for="(input, index) of inputs"
+            v-for="(input, index) of i"
             :key="index"
           >{{ input }}</span>
         </p>
@@ -35,56 +35,28 @@
 </template>
 
 <script>
+import Timer from "@/components/Timer.vue";
 import PageTitle from '@/components/PageTitle.vue';
+import levelService from "@/services/level-service";
+import { mapActions } from "vuex";
+
 export default {
   components: {
-    PageTitle
+    PageTitle,
+    Timer
   },
-  data() {
+  asyncData({ redirect, params, store }) {
+    const level = store.getters['user-level/level'](+params.id);
+
+    if (!level) {
+      return redirect("/");
+    }
+
     return {
-      inputs: [
-        "j",
-        "j",
-        "j",
-        "j",
-        " ",
-        "k",
-        "k",
-        "k",
-        "k",
-        " ",
-        "j",
-        "j",
-        "j",
-        "j",
-        " ",
-        "k",
-        "k",
-        "k",
-        "k",
-        " ",
-        "j",
-        "j",
-        "j",
-        "j",
-        " ",
-        "k",
-        "k",
-        "k",
-        "k",
-        " ",
-        "j",
-        "j",
-        "j",
-        "j",
-        " ",
-        "k",
-        "k",
-        "k",
-        "k"
-      ],
+      level,
       index: 0,
-      currentInput: 0
+      currentInput: 0,
+      invalidCounter: 0
     };
   },
 
@@ -92,27 +64,25 @@ export default {
     this.$refs.input[this.currentInput].focus();
   },
   methods: {
-    test(event) {
-      event.stopPropagation();
-      event.preventDefault();
-
-      return false;
-    },
+    ...mapActions({
+      addUserLevel: "user-level/add"
+    }),
     onType(event) {
       const target = event.target;
       target.innerHTML = "";
 
-      const addValid = () => {
+      const addAllValid = () => {
         for (let i = 0; i < this.index; i += 1) {
-          target.innerHTML += `<span>${this.inputs[i].trim() ? this.inputs[i] : '&nbsp;'}</span>`;
+          target.innerHTML += `<span>${this.level.inputs[this.currentInput][i].trim() ? this.level.inputs[this.currentInput][i] : '&nbsp;'}</span>`;
         }
       };
 
-      if (this.inputs[this.index] === event.data) {
+      if (this.level.inputs[this.currentInput][this.index] === event.data) {
         this.index += 1;
-        addValid();
+        addAllValid();
       } else if (typeof event.data === "string") {
-        addValid();
+        addAllValid();
+        this.invalidCounter += 1;
         target.innerHTML += `<span class="text-red">${event.data}</span>`
       }
 
@@ -129,11 +99,14 @@ export default {
       }
 
       // check end
-      if (this.index === this.inputs.length) {
+      if (this.index === this.level.inputs[this.currentInput].length) {
         if (this.$refs.input[++this.currentInput]) {
           this.$refs.input[this.currentInput].focus()
           this.index = 0;
-        };
+        } else {
+          this.$refs.timer.stop();
+          this.addUserLevel(+this.$route.params.id);
+        }
       }
     }
   }

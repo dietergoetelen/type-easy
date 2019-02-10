@@ -5,11 +5,10 @@
 </template>
 
 <script>
-import authService from '../services/auth-service'
 export default {
+  layout: 'login',
   methods: {
     login() {
-      authService.login();
     }
   }
 }
